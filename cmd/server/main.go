@@ -19,6 +19,7 @@ func main() {
 	db := config.InitDB()
 	if err := db.AutoMigrate(
 		&models.User{},
+		&models.Supplier{},
 	); err != nil {
 		log.Fatalf("Database migration failed: %v", err)
 	}

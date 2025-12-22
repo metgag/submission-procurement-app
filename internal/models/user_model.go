@@ -11,5 +11,5 @@ type User struct {
 	BaseModel
 	Username string   `gorm:"type:varchar(100);uniqueIndex;not null"`
 	Password string   `gorm:"type:varchar(255);not null"`
-	Role     UserRole `gorm:"type:varchar(20);not null;default:'user'"`
+	Role     UserRole `gorm:"type:varchar(20);not null;default:'user';check:role IN ('admin','user')"`
 }
