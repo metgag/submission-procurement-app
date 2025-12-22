@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-var (
-	JWTSecret = []byte(os.Getenv("JWT_SECRET"))
-	JWTExpiry = 12 * time.Hour
-)
+var JWTExpiry = 12 * time.Hour
+
+func GetJWTSecret() []byte {
+	return []byte(os.Getenv("JWT_SECRET"))
+}
