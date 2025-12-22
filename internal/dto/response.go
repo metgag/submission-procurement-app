@@ -18,3 +18,10 @@ type RegisterResponse struct {
 type LoginResponse struct {
 	Token string `json:"token"`
 }
+
+type SupplierResponse struct {
+	ID      uint   `json:"id"`
+	Name    string `json:"name"`
+	Email   string `json:"email"`
+	Address string `json:"address"`
+}
