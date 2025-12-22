@@ -13,3 +13,16 @@ func FindByID(c *fiber.Ctx, db *gorm.DB, modelName string, dest any) error {
 
 	return nil
 }
+
+func FindByIDValue(
+	c *fiber.Ctx,
+	db *gorm.DB,
+	modelName string,
+	id any,
+	dest any,
+) error {
+	if err := db.First(dest, id).Error; err != nil {
+		return Error(c, fiber.StatusNotFound, modelName+" not found", err, true)
+	}
+	return nil
+}

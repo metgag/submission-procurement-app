@@ -1,0 +1,155 @@
+@baseUrl = http://localhost:3080/api
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0LCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzY2NDU1NjAxLCJpYXQiOjE3NjY0MTI0MDF9.hP7TgksyF2GfgJuzHc1E8KxAbNX6m_ERevJwwfO4d6s
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo1LCJ1c2VybmFtZSI6InVzZXIxIiwicm9sZSI6InVzZXIiLCJleHAiOjE3NjY0NTU1ODMsImlhdCI6MTc2NjQxMjM4M30.eFMiAuaVSoALcm_eidQ7Su7H53Yd06MhhPfALytUSMc
+
+### =========================
+### Health Check
+### =========================
+GET {{baseUrl}}/ping
+Accept: text/plain
+
+
+### =========================
+### Register
+### =========================
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "user1",
+  "password": "User!23"
+}
+
+
+### =========================
+### Login Admin
+### =========================
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "P@ssw0rd"
+}
+
+
+### =========================
+### Login User
+### =========================
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "user1",
+  "password": "User!23"
+}
+
+
+# ============================================================
+# ADMIN ROUTES
+# ============================================================
+
+### =========================
+### Create Supplier
+### =========================
+POST {{baseUrl}}/admin/suppliers
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Saep Copet",
+  "email": "saep@copet.com",
+  "address": "Jl. Copet No. 42"
+}
+
+
+### =========================
+### Read Suppliers
+### =========================
+GET {{baseUrl}}/admin/suppliers
+Authorization: Bearer {{adminToken}}
+
+
+### =========================
+### Update Supplier (PATCH)
+### =========================
+PATCH {{baseUrl}}/admin/suppliers/1
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "address": "Jl. Baru No. 99"
+}
+
+
+### =========================
+### Delete Supplier
+### =========================
+DELETE {{baseUrl}}/admin/suppliers/2
+Authorization: Bearer {{adminToken}}
+
+
+### =========================
+### Create Item
+### =========================
+POST {{baseUrl}}/admin/items
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Kacamata"
+}
+
+
+### =========================
+### Read Items
+### =========================
+GET {{baseUrl}}/admin/items
+Authorization: Bearer {{adminToken}}
+
+
+### =========================
+### Assign Item to Supplier
+### =========================
+POST {{baseUrl}}/admin/supplier-items
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "supplier_id": 1,
+  "item_id": 2,
+  "price": 120000,
+  "stock": 30
+}
+
+### =========================
+### Get Supplier Items
+### =========================
+GET {{baseUrl}}/admin/supplier-items?supplier_id=1
+Authorization: Bearer {{adminToken}}
+
+
+# ============================================================
+# USER ROUTES
+# ============================================================
+
+### =========================
+### Create Purchase
+### =========================
+POST {{baseUrl}}/purchases
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "supplier_id": 1,
+  "items": [
+    {
+      "supplier_item_id": 1,
+      "quantity": 2
+    },
+    {
+      "supplier_item_id": 2,
+      "quantity": 1
+    }
+  ]
+}

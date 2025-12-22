@@ -3,6 +3,7 @@ package utils
 import (
 	"time"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/metgag/procurement-api-example/internal/config"
@@ -28,4 +29,9 @@ func GenerateJWT(userID uint, username, role string) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(config.GetJWTSecret())
+}
+
+func GetJWTClaims(c *fiber.Ctx) *JWTClaims {
+	user := c.Locals("user").(*jwt.Token)
+	return user.Claims.(*JWTClaims)
 }

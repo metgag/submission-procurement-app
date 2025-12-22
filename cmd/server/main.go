@@ -20,6 +20,10 @@ func main() {
 	if err := db.AutoMigrate(
 		&models.User{},
 		&models.Supplier{},
+		&models.Item{},
+		&models.SupplierItem{},
+		&models.Purchasing{},
+		&models.PurchasingDetail{},
 	); err != nil {
 		log.Fatalf("Database migration failed: %v", err)
 	}
