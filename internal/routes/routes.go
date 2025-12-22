@@ -37,5 +37,8 @@ func InitRoutes(app *fiber.App, db *gorm.DB) {
 	)
 	{
 		admin.Post("/suppliers", supplierHandler.Create)
+		admin.Get("/suppliers", supplierHandler.ReadAll)
+		admin.Patch("/suppliers/:id", supplierHandler.Update)
+		admin.Delete("/suppliers/:id", supplierHandler.Delete)
 	}
 }

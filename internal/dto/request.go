@@ -16,3 +16,9 @@ type CreateSupplierRequest struct {
 	Email   string `json:"email" validate:"required,email"`
 	Address string `json:"address"`
 }
+
+type UpdateSupplierRequest struct {
+	Name    *string `json:"name,omitempty" validate:"omitempty,min=2"`
+	Email   *string `json:"email,omitempty" validate:"omitempty,email"`
+	Address *string `json:"address,omitempty"`
+}
