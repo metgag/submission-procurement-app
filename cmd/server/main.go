@@ -24,7 +24,7 @@ func main() {
 	}
 
 	app := fiber.New()
-	routes.InitRoutes(app)
+	routes.InitRoutes(app, db)
 
 	app.Listen(":3080")
 }
