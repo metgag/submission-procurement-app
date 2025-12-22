@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:3080/api
-@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0LCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzY2NDU1NjAxLCJpYXQiOjE3NjY0MTI0MDF9.hP7TgksyF2GfgJuzHc1E8KxAbNX6m_ERevJwwfO4d6s
-@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo1LCJ1c2VybmFtZSI6InVzZXIxIiwicm9sZSI6InVzZXIiLCJleHAiOjE3NjY0NTU1ODMsImlhdCI6MTc2NjQxMjM4M30.eFMiAuaVSoALcm_eidQ7Su7H53Yd06MhhPfALytUSMc
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....
 
 ### =========================
 ### Health Check
