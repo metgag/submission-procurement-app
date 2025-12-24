@@ -4,11 +4,11 @@ const fetchInventory = () => {
     .then((res) => {
       renderInventory(res.data);
     })
-    .catch((err) => {
+    .catch(() => {
       showToast({
         type: "error",
         title: "Load Inventory Failed",
-        message: err.responseJSON?.message || "Unable to load inventory",
+        message: "Unable to load inventory",
       });
     });
 };
@@ -36,6 +36,9 @@ const renderInventory = (items) => {
             </td>
             <td class="px-3 py-2 whitespace-nowrap">
                 ${item.stock}
+            </td>
+            <td class="px-3 py-2 whitespace-nowrap">
+                ${item.supplier_name}
             </td>
         </tr>
     `);
