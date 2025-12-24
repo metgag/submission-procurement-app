@@ -24,8 +24,21 @@ POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "username": "user1",
-  "password": "User!23"
+  "username": "user3",
+  "password": "User!234"
+}
+
+
+### =========================
+### Register Admin
+### =========================
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "admin1",
+  "password": "Admin!23",
+  "role": "admin"
 }
 
 
@@ -83,7 +96,7 @@ Authorization: Bearer {{userToken}}
 ### =========================
 ### Read Supplier Items By Supplier ID
 ### =========================
-GET {{baseUrl}}/supplier-items?supplier_id=1
+GET {{baseUrl}}/supplier-items?supplier_id=4
 Authorization: Bearer {{userToken}}
 
 
@@ -164,9 +177,9 @@ Content-Type: application/json
 
 {
   "supplier_id": 4,
-  "item_id": 2,
-  "price": 90000,
-  "stock": 20
+  "item_id": 4,
+  "price": 280000,
+  "stock": 30
 }
 
 
@@ -202,14 +215,14 @@ Authorization: Bearer {{userToken}}
 Content-Type: application/json
 
 {
-  "supplier_id": 1,
+  "supplier_id": 4,
   "items": [
     {
-      "supplier_item_id": 1,
-      "quantity": 2
+      "supplier_item_id": 4,
+      "quantity": 1
     },
     {
-      "supplier_item_id": 2,
+      "supplier_item_id": 5,
       "quantity": 1
     }
   ]
