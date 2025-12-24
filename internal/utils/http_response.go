@@ -19,7 +19,9 @@ func Error(
 		log.Printf("[ERROR] %s: %v\n", publicMessage, err)
 	}
 
-	return c.Status(status).JSON(dto.ErrorResponse{
+	_ = c.Status(status).JSON(dto.ErrorResponse{
 		Message: publicMessage,
 	})
+
+	return fiber.NewError(status, publicMessage)
 }
