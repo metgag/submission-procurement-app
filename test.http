@@ -1,6 +1,10 @@
-@baseUrl = http://localhost:3080/api
-@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....
-@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....
+@baseUrl = http://localhost:3080/api/v1
+@adminToken = {{loginAdmin.response.body.data.token}}
+@userToken = {{loginUser.response.body.data.token}}
+
+# ============================================================
+# PUBLIC ROUTES
+# ============================================================
 
 ### =========================
 ### Health Check
@@ -9,8 +13,12 @@ GET {{baseUrl}}/ping
 Accept: text/plain
 
 
+# ============================================================
+# AUTH ROUTES
+# ============================================================
+
 ### =========================
-### Register
+### Register User
 ### =========================
 POST {{baseUrl}}/auth/register
 Content-Type: application/json
@@ -24,6 +32,7 @@ Content-Type: application/json
 ### =========================
 ### Login Admin
 ### =========================
+# @name loginAdmin
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
@@ -36,6 +45,7 @@ Content-Type: application/json
 ### =========================
 ### Login User
 ### =========================
+# @name loginUser
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
@@ -43,6 +53,38 @@ Content-Type: application/json
   "username": "user1",
   "password": "User!23"
 }
+
+
+# ============================================================
+# SHARED PROTECTED ROUTES (ADMIN & USER)
+# ============================================================
+
+### =========================
+### Read Items
+### =========================
+GET {{baseUrl}}/items
+Authorization: Bearer {{userToken}}
+
+
+### =========================
+### Read Suppliers
+### =========================
+GET {{baseUrl}}/suppliers
+Authorization: Bearer {{userToken}}
+
+
+### =========================
+### Read Supplier Items
+### =========================
+GET {{baseUrl}}/supplier-items
+Authorization: Bearer {{userToken}}
+
+
+### =========================
+### Read Supplier Items By Supplier ID
+### =========================
+GET {{baseUrl}}/supplier-items?supplier_id=1
+Authorization: Bearer {{userToken}}
 
 
 # ============================================================
@@ -57,17 +99,10 @@ Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
-  "name": "Saep Copet",
-  "email": "saep@copet.com",
-  "address": "Jl. Copet No. 42"
+  "name": "Tarung Derajat",
+  "email": "ajat@tarung.com",
+  "address": "Jl. Tarung No. 42"
 }
-
-
-### =========================
-### Read Suppliers
-### =========================
-GET {{baseUrl}}/admin/suppliers
-Authorization: Bearer {{adminToken}}
 
 
 ### =========================
@@ -97,14 +132,26 @@ Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
-  "name": "Kacamata"
+  "name": "Jam Tangan"
 }
 
 
 ### =========================
-### Read Items
+### Update Item (PATCH)
 ### =========================
-GET {{baseUrl}}/admin/items
+PATCH {{baseUrl}}/admin/items/1
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Kacamata Premium"
+}
+
+
+### =========================
+### Delete Item
+### =========================
+DELETE {{baseUrl}}/admin/items/3
 Authorization: Bearer {{adminToken}}
 
 
@@ -116,16 +163,30 @@ Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
-  "supplier_id": 1,
+  "supplier_id": 4,
   "item_id": 2,
-  "price": 120000,
-  "stock": 30
+  "price": 90000,
+  "stock": 20
 }
 
+
 ### =========================
-### Get Supplier Items
+### Update Supplier Item (PATCH)
 ### =========================
-GET {{baseUrl}}/admin/supplier-items?supplier_id=1
+PATCH {{baseUrl}}/admin/supplier-items/1
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "price": 95000,
+  "stock": 15
+}
+
+
+### =========================
+### Delete Supplier Item
+### =========================
+DELETE {{baseUrl}}/admin/supplier-items/1
 Authorization: Bearer {{adminToken}}
 
 
