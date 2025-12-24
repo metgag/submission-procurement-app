@@ -12,7 +12,13 @@
         class="w-88 flex flex-col justify-between border-e border-gray-100 bg-white"
       >
         <div class="px-4 py-6">
-          <ul class="space-y-1">
+          <span
+            class="grid h-10 w-26 place-content-center rounded bg-gray-100 text-xs text-gray-600"
+          >
+            User
+          </span>
+
+          <ul class="mt-6 space-y-1">
             <li>
               <a
                 href="/dashboard"
@@ -66,10 +72,16 @@
         </div>
 
         <div class="mt-6 flex gap-3 justify-end">
-          <a href="/purchase" class="rounded bg-blue-600 px-4 py-2 text-white hover:opacity-70">
+          <a
+            href="/purchase"
+            class="rounded bg-blue-600 px-4 py-2 text-white hover:opacity-70"
+          >
             New Purchase
           </a>
-          <a href="/dashboard" class="rounded bg-gray-200 px-4 py-2 hover:opacity-70">
+          <a
+            href="/dashboard"
+            class="rounded bg-gray-200 px-4 py-2 hover:opacity-70"
+          >
             Back to Dashboard
           </a>
         </div>
