@@ -243,6 +243,8 @@ Content-Type: application/json
 
 ## Database Schema
 
+![Table Schema](table-schema.png)
+
 ### Users
 
 * `id` (Primary Key)
@@ -275,11 +277,10 @@ Content-Type: application/json
 ### Purchases
 
 * `id` (Primary Key)
-* `date`
+* `order_date`
 * `supplier_id` (Foreign Key)
 * `user_id` (Foreign Key)
 * `grand_total`
-* `created_at`
 
 ### Purchasing Details
 
