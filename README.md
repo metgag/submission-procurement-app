@@ -11,6 +11,9 @@ Aplikasi sistem pengadaan barang yang digunakan untuk mencatat transaksi pembeli
 - [Configuration](#configuration)
 - [Running the Application](#running-the-application)
 - [API Documentation](#api-documentation)
+- [Database Schema](#database-schema)
+- [Role-based Access](#role-based-access)
+- [Troubleshooting](#troubleshooting)
 
 ## Tech Stack
 
@@ -44,7 +47,7 @@ Aplikasi sistem pengadaan barang yang digunakan untuk mencatat transaksi pembeli
 
 Pastikan sudah terinstall:
 - Go 1.24 atau lebih
-- Docker untuk running PostgreSQL atau PostgreClient
+- Docker untuk running PostgreSQL atau PostgreSQL Client
 - Git
 
 ## Installation
@@ -89,7 +92,18 @@ JWT_SECRET="a-string-secret-at-least-256-bits-long"
 
 ## Running the Application
 
-### 1. Run Backend Server
+### 1. Install Dependencies
+
+```bash
+go mod tidy
+```
+
+Command ini akan:
+- Download semua dependencies yang diperlukan
+- Remove dependencies yang tidak terpakai
+- Update `go.sum` file
+
+### 2. Run Backend Server
 
 ```bash
 go run ./cmd/server
@@ -101,7 +115,7 @@ Server akan berjalan di `http://localhost:3080`
 - Table database akan dibuat secara otomatis saat pertama kali running
 - Data masih kosong, perlu registrasi user terlebih dahulu
 
-### 2. Register User
+### 3. Register User
 
 Buka browser atau gunakan Postman untuk registrasi user pertama:
 
@@ -115,7 +129,7 @@ Buka browser atau gunakan Postman untuk registrasi user pertama:
 }
 ```
 
-### 3. Access Frontend
+### 4. Access Frontend
 
 Buka browser dan akses:
 - Login Page: `http://localhost:3080/`
@@ -256,6 +270,15 @@ Response:
 
 ## Troubleshooting
 
+### Dependencies Error / Module Not Found
+```bash
+go mod tidy
+go mod download
+```
+- `go mod tidy` membersihkan dan menambahkan dependencies yang diperlukan
+- `go mod download` men-download ulang semua dependencies
+- Jalankan setelah clone repository atau saat ada error module
+
 ### Database Connection Failed
 - Pastikan PostgreSQL container sudah running: `docker ps`
 - Cek konfigurasi port di `.env` sesuai dengan container
@@ -268,3 +291,11 @@ Response:
 ### Table Not Created
 - Stop server dan jalankan ulang: `go run ./cmd/server`
 - Cek log error di terminal
+
+### Build Error
+```bash
+go clean -cache
+go mod tidy
+go build ./cmd/server
+```
+- Clear build cache dan rebuild project
