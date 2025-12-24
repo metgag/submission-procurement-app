@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Purchase Order Invoice</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  </head>
+
+  <body class="bg-gray-100 min-h-screen">
+    <div class="flex min-h-screen">
+      <aside
+        class="w-88 flex flex-col justify-between border-e border-gray-100 bg-white"
+      >
+        <div class="px-4 py-6">
+          <ul class="space-y-1">
+            <li>
+              <a
+                href="/dashboard"
+                class="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+              >
+                Dashboard
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="/purchase"
+                class="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+              >
+                Purchase
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div
+          id="logoutBtn"
+          class="px-4 border-t border-gray-100 cursor-pointer hover:bg-red-600 hover:text-white"
+        >
+          <button class="p-4 cursor-pointer">Logout</button>
+        </div>
+      </aside>
+
+      <main class="w-full mx-auto p-6 space-y-6">
+        <h2 class="text-xl font-semibold text-green-600 mb-4">Order Invoice</h2>
+
+        <p class="mb-2">
+          <strong>Purchase ID:</strong>
+          <span id="purchaseId"></span>
+        </p>
+
+        <table class="min-w-full divide-y-2 divide-gray-200">
+          <thead class="sticky top-0 bg-white">
+            <tr class="*:font-medium *:text-gray-900">
+              <th class="p-2 whitespace-nowrap text-left">Item ID</th>
+              <th class="p-2 whitespace-nowrap">Qty</th>
+              <th class="p-2 whitespace-nowrap text-right">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody id="itemsTable"></tbody>
+        </table>
+
+        <div class="mt-4 text-right font-semibold">
+          Grand Total:
+          <span id="grandTotal"></span>
+        </div>
+
+        <div class="mt-6 flex gap-3 justify-end">
+          <a href="/purchase" class="rounded bg-blue-600 px-4 py-2 text-white hover:opacity-70">
+            New Purchase
+          </a>
+          <a href="/dashboard" class="rounded bg-gray-200 px-4 py-2 hover:opacity-70">
+            Back to Dashboard
+          </a>
+        </div>
+      </main>
+    </div>
+
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/utils.js"></script>
+    <script src="/assets/js/invoice.js"></script>
+  </body>
+</html>

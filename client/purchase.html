@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Create Purchase</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body class="bg-gray-100 min-h-screen">
+    <div id="toast-container" class="fixed top-5 right-5 z-50 space-y-3"></div>
+
+    <div class="flex min-h-screen">
+      <aside
+        class="w-88 flex flex-col justify-between border-e border-gray-100 bg-white"
+      >
+        <div class="px-4 py-6">
+          <ul class="space-y-1">
+            <li>
+              <a
+                href="/dashboard"
+                class="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+              >
+                Dashboard
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="/purchase"
+                class="block rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700"
+              >
+                Purchase
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div id="logoutBtn" class="px-4 border-t border-gray-100 cursor-pointer hover:bg-red-600 hover:text-white">
+          <button class="p-4 cursor-pointer">Logout</button>
+        </div>
+      </aside>
+
+      <main class="w-full mx-auto p-6 space-y-6">
+        <!-- Supplier Select -->
+        <div class="bg-white p-4 rounded shadow-xs">
+          <label class="block text-sm font-medium mb-3">Supplier</label>
+          <select
+            id="supplierSelect"
+            class="w-full rounded px-3 py-2 shadow-xs cursor-pointer hover:bg-gray-50"
+          >
+            <option value="">Select Supplier</option>
+          </select>
+        </div>
+
+        <!-- Item Add -->
+        <div
+          class="bg-white p-4 rounded shadow-xs grid grid-cols-1 md:grid-cols-4 gap-4"
+        >
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium mb-3">Item</label>
+            <select
+              id="itemSelect"
+              class="w-full rounded px-3 py-2 shadow-xs cursor-pointer hover:bg-gray-50"
+            >
+              <option value="">Select Item</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-3">Qty</label>
+            <input
+              type="number"
+              id="qtyInput"
+              min="1"
+              class="w-full rounded px-3 py-2 shadow-xs cursor-pointer hover:bg-gray-50"
+            />
+          </div>
+
+          <div class="flex items-end">
+            <button
+              id="addToCartBtn"
+              class="w-full rounded bg-blue-700 text-white px-4 py-2 cursor-pointer hover:opacity-80"
+            >
+              Add
+            </button>
+          </div>
+        </div>
+
+        <!-- Cart Table -->
+        <div class="bg-white p-4 rounded shadow-xs">
+          <h3 class="font-medium mb-2">Cart</h3>
+
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr class="text-left text-sm font-medium text-gray-700">
+                <th class="py-2">Item</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Subtotal</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="cartTableBody"></tbody>
+          </table>
+        </div>
+
+        <!-- Submit -->
+        <div class="text-right">
+          <button
+            id="submitOrderBtn"
+            type="button"
+            class="rounded bg-green-600 px-6 py-2 text-white cursor-pointer hover:opacity-80 disabled:cursor-not-allowed disabled:bg-gray-400"
+          >
+            Submit Order
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/toast.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/utils.js"></script>
+    <script src="/assets/js/purchase.js"></script>
+  </body>
+</html>
