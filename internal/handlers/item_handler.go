@@ -2,29 +2,29 @@ package handlers
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
 
 	"github.com/metgag/procurement-api-example/internal/dto"
 	"github.com/metgag/procurement-api-example/internal/models"
+	"github.com/metgag/procurement-api-example/internal/services"
 	"github.com/metgag/procurement-api-example/internal/utils"
 )
 
 type ItemHandler struct {
-	DB *gorm.DB
+	ItemService *services.ItemService
 }
 
-func NewItemHandler(db *gorm.DB) *ItemHandler {
-	return &ItemHandler{DB: db}
+func NewItemHandler(service *services.ItemService) *ItemHandler {
+	return &ItemHandler{ItemService: service}
 }
 
 func (h *ItemHandler) Create(c *fiber.Ctx) error {
 	var req dto.CreateItemRequest
-	if err := utils.ParseAndValidate(c, &req); err != nil {
+	if err := utils.ParseBodyAndValidate(c, &req); err != nil {
 		return err
 	}
 
-	item := models.Item{Name: req.Name}
-	if err := h.DB.Create(&item).Error; err != nil {
+	item, err := h.ItemService.Create(req)
+	if err != nil {
 		return utils.Error(c, fiber.StatusConflict, "Item already exist", err, true)
 	}
 
@@ -38,8 +38,8 @@ func (h *ItemHandler) Create(c *fiber.Ctx) error {
 }
 
 func (h *ItemHandler) ReadAll(c *fiber.Ctx) error {
-	var items []models.Item
-	if err := h.DB.Find(&items).Error; err != nil {
+	items, err := h.ItemService.GetAll()
+	if err != nil {
 		return utils.Error(c, fiber.StatusInternalServerError, "Unable to retrieve items", err, true)
 	}
 
@@ -59,18 +59,16 @@ func (h *ItemHandler) ReadAll(c *fiber.Ctx) error {
 
 func (h *ItemHandler) Update(c *fiber.Ctx) error {
 	var req dto.CreateItemRequest
-	if err := utils.ParseAndValidate(c, &req); err != nil {
+	if err := utils.ParseBodyAndValidate(c, &req); err != nil {
 		return err
 	}
 
 	var item models.Item
-	if err := utils.FindByID(c, h.DB, "Item", &item); err != nil {
+	if err := utils.FindByID(c, h.ItemService.DB, "Item", &item); err != nil {
 		return err
 	}
 
-	item.Name = req.Name
-
-	if err := h.DB.Save(&item).Error; err != nil {
+	if err := h.ItemService.Update(&item, req); err != nil {
 		return utils.Error(
 			c,
 			fiber.StatusInternalServerError,
@@ -91,11 +89,11 @@ func (h *ItemHandler) Update(c *fiber.Ctx) error {
 
 func (h *ItemHandler) Delete(c *fiber.Ctx) error {
 	var item models.Item
-	if err := utils.FindByID(c, h.DB, "Item", &item); err != nil {
+	if err := utils.FindByID(c, h.ItemService.DB, "Item", &item); err != nil {
 		return err
 	}
 
-	if err := h.DB.Delete(&item).Error; err != nil {
+	if err := h.ItemService.Delete(&item); err != nil {
 		return utils.Error(
 			c,
 			fiber.StatusInternalServerError,

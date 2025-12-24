@@ -44,10 +44,17 @@ func InitRoutes(app *fiber.App, db *gorm.DB) {
 	// ========================
 	// Handlers & Services
 	// ========================
-	authHandler := handlers.NewAuthHandler(db)
-	supplierHandler := handlers.NewSupplierHandler(db)
-	itemHandler := handlers.NewItemHandler(db)
-	supplierItemHandler := handlers.NewSupplierItemHandler(db)
+	authService := services.NewAuthService(db)
+	authHandler := handlers.NewAuthHandler(authService)
+
+	supplierService := services.NewSupplierService(db)
+	supplierHandler := handlers.NewSupplierHandler(supplierService)
+
+	itemService := services.NewItemService(db)
+	itemHandler := handlers.NewItemHandler(itemService)
+
+	supplierItemService := services.NewSupplierItemService(db)
+	supplierItemHandler := handlers.NewSupplierItemHandler(supplierItemService)
 
 	purchaseService := services.NewPurchasingService(db)
 	purchaseHandler := handlers.NewPurchasingHandler(purchaseService)

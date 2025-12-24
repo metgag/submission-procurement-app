@@ -4,36 +4,29 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
 
 	"github.com/metgag/procurement-api-example/internal/dto"
 	"github.com/metgag/procurement-api-example/internal/models"
+	"github.com/metgag/procurement-api-example/internal/services"
 	"github.com/metgag/procurement-api-example/internal/utils"
 )
 
 type SupplierHandler struct {
-	DB *gorm.DB
+	Service *services.SupplierService
 }
 
-func NewSupplierHandler(db *gorm.DB) *SupplierHandler {
-	return &SupplierHandler{DB: db}
+func NewSupplierHandler(service *services.SupplierService) *SupplierHandler {
+	return &SupplierHandler{Service: service}
 }
 
 func (h *SupplierHandler) Create(c *fiber.Ctx) error {
 	var req dto.CreateSupplierRequest
-	if err := utils.ParseAndValidate(c, &req); err != nil {
+	if err := utils.ParseBodyAndValidate(c, &req); err != nil {
 		return err
 	}
 
-	supplier := models.Supplier{
-		Name:    req.Name,
-		Email:   req.Email,
-		Address: req.Address,
-	}
-
-	if err := h.DB.
-		Create(&supplier).
-		Error; err != nil {
+	supplier, err := h.Service.Create(req)
+	if err != nil {
 		return utils.Error(c, fiber.StatusInternalServerError, "Failed to create supplier", err, true)
 	}
 
@@ -49,8 +42,8 @@ func (h *SupplierHandler) Create(c *fiber.Ctx) error {
 }
 
 func (h *SupplierHandler) ReadAll(c *fiber.Ctx) error {
-	var suppliers []models.Supplier
-	if err := h.DB.Find(&suppliers).Error; err != nil {
+	suppliers, err := h.Service.GetAll()
+	if err != nil {
 		return utils.Error(c, fiber.StatusInternalServerError, "Failed to read suppliers", err, true)
 	}
 
@@ -72,26 +65,16 @@ func (h *SupplierHandler) ReadAll(c *fiber.Ctx) error {
 
 func (h *SupplierHandler) Update(c *fiber.Ctx) error {
 	var supplier models.Supplier
-	if err := utils.FindByID(c, h.DB, "Supplier", &supplier); err != nil {
+	if err := utils.FindByID(c, h.Service.DB, "Supplier", &supplier); err != nil {
 		return err
 	}
 
 	var req dto.UpdateSupplierRequest
-	if err := utils.ParseAndValidate(c, &req); err != nil {
+	if err := utils.ParseBodyAndValidate(c, &req); err != nil {
 		return err
 	}
 
-	if req.Name != nil {
-		supplier.Name = *req.Name
-	}
-	if req.Email != nil {
-		supplier.Email = *req.Email
-	}
-	if req.Address != nil {
-		supplier.Address = *req.Address
-	}
-
-	if err := h.DB.Save(&supplier).Error; err != nil {
+	if err := h.Service.Update(&supplier, req); err != nil {
 		return utils.Error(c, fiber.StatusInternalServerError, "Failed to update supplier", err, true)
 	}
 
@@ -109,11 +92,11 @@ func (h *SupplierHandler) Update(c *fiber.Ctx) error {
 
 func (h *SupplierHandler) Delete(c *fiber.Ctx) error {
 	var supplier models.Supplier
-	if err := utils.FindByID(c, h.DB, "Supplier", &supplier); err != nil {
+	if err := utils.FindByID(c, h.Service.DB, "Supplier", &supplier); err != nil {
 		return err
 	}
 
-	if err := h.DB.Delete(&supplier).Error; err != nil {
+	if err := h.Service.Delete(&supplier); err != nil {
 		return utils.Error(c, fiber.StatusInternalServerError, "Failed to delete supplier", err, true)
 	}
 

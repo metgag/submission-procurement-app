@@ -18,7 +18,7 @@ func NewPurchasingHandler(s *services.PurchasingService) *PurchasingHandler {
 
 func (h *PurchasingHandler) Create(c *fiber.Ctx) error {
 	var req dto.CreatePurchasingRequest
-	if err := utils.ParseAndValidate(c, &req); err != nil {
+	if err := utils.ParseBodyAndValidate(c, &req); err != nil {
 		return err
 	}
 

@@ -2,72 +2,60 @@ package handlers
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
 
 	"github.com/metgag/procurement-api-example/internal/dto"
 	"github.com/metgag/procurement-api-example/internal/models"
+	"github.com/metgag/procurement-api-example/internal/services"
 	"github.com/metgag/procurement-api-example/internal/utils"
 )
 
 type SupplierItemHandler struct {
-	DB *gorm.DB
+	Service *services.SupplierItemService
 }
 
-func NewSupplierItemHandler(db *gorm.DB) *SupplierItemHandler {
-	return &SupplierItemHandler{DB: db}
+func NewSupplierItemHandler(service *services.SupplierItemService) *SupplierItemHandler {
+	return &SupplierItemHandler{Service: service}
 }
 
 func (h *SupplierItemHandler) Create(c *fiber.Ctx) error {
 	var req dto.CreateSupplierItemRequest
-	if err := utils.ParseAndValidate(c, &req); err != nil {
+	if err := utils.ParseBodyAndValidate(c, &req); err != nil {
 		return err
 	}
 
+	// Validasi existence Supplier & Item
 	var supplier models.Supplier
-	if err := utils.FindByIDValue(c, h.DB, "Supplier", req.SupplierID, &supplier); err != nil {
+	if err := utils.FindByIDValue(c, h.Service.DB, "Supplier", req.SupplierID, &supplier); err != nil {
 		return err
 	}
-
 	var item models.Item
-	if err := utils.FindByIDValue(c, h.DB, "Item", req.ItemID, &item); err != nil {
+	if err := utils.FindByIDValue(c, h.Service.DB, "Item", req.ItemID, &item); err != nil {
 		return err
 	}
 
-	supplierItem := models.SupplierItem{
-		SupplierID: req.SupplierID,
-		ItemID:     req.ItemID,
-		Price:      req.Price,
-		Stock:      req.Stock,
-	}
-
-	if err := h.DB.Create(&supplierItem).Error; err != nil {
+	supplierItem, err := h.Service.Create(req)
+	if err != nil {
 		return utils.Error(c, fiber.StatusInternalServerError, "Unable to assign item to supplier", err, true)
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(dto.OKResponse{
 		Message: "Item assigned to supplier successfully",
 		Data: dto.SupplierItemResponse{
-			ID:         supplierItem.ID,
-			SupplierID: supplierItem.SupplierID,
-			ItemID:     supplierItem.ItemID,
-			Price:      supplierItem.Price,
-			Stock:      supplierItem.Stock,
+			ID:           supplierItem.ID,
+			SupplierID:   supplierItem.SupplierID,
+			ItemID:       supplierItem.ItemID,
+			Price:        supplierItem.Price,
+			Stock:        supplierItem.Stock,
+			ItemName:     item.Name,
+			SupplierName: supplier.Name,
 		},
 	})
 }
 
 func (h *SupplierItemHandler) ReadItems(c *fiber.Ctx) error {
-	var items []models.SupplierItem
-
-	query := h.DB.
-		Preload("Item").
-		Preload("Supplier")
-
-	if supplierID := c.QueryInt("supplier_id"); supplierID > 0 {
-		query = query.Where("supplier_id = ?", supplierID)
-	}
-
-	if err := query.Find(&items).Error; err != nil {
+	supplierID := c.QueryInt("supplier_id")
+	items, err := h.Service.GetAll(supplierID)
+	if err != nil {
 		return utils.Error(c, fiber.StatusInternalServerError, "Unable to retrieve supplier items", err, true)
 	}
 
@@ -85,32 +73,24 @@ func (h *SupplierItemHandler) ReadItems(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(dto.OKResponse{
-		Message: "Supplier items retrieved succesfully",
+		Message: "Supplier items retrieved successfully",
 		Data:    res,
 	})
 }
 
 func (h *SupplierItemHandler) Update(c *fiber.Ctx) error {
 	id := c.Params("id")
-
 	var supplierItem models.SupplierItem
-	if err := utils.FindByIDValue(c, h.DB, "SupplierItem", id, &supplierItem); err != nil {
+	if err := utils.FindByIDValue(c, h.Service.DB, "SupplierItem", id, &supplierItem); err != nil {
 		return err
 	}
 
 	var req dto.UpdateSupplierItemRequest
-	if err := utils.ParseAndValidate(c, &req); err != nil {
+	if err := utils.ParseBodyAndValidate(c, &req); err != nil {
 		return err
 	}
 
-	if req.Price != nil {
-		supplierItem.Price = *req.Price
-	}
-	if req.Stock != nil {
-		supplierItem.Stock = *req.Stock
-	}
-
-	if err := h.DB.Save(&supplierItem).Error; err != nil {
+	if err := h.Service.Update(&supplierItem, req); err != nil {
 		return utils.Error(c, fiber.StatusInternalServerError, "Failed to update supplier item", err, true)
 	}
 
@@ -128,13 +108,12 @@ func (h *SupplierItemHandler) Update(c *fiber.Ctx) error {
 
 func (h *SupplierItemHandler) Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
-
 	var supplierItem models.SupplierItem
-	if err := utils.FindByIDValue(c, h.DB, "SupplierItem", id, &supplierItem); err != nil {
+	if err := utils.FindByIDValue(c, h.Service.DB, "SupplierItem", id, &supplierItem); err != nil {
 		return err
 	}
 
-	if err := h.DB.Delete(&supplierItem).Error; err != nil {
+	if err := h.Service.Delete(&supplierItem); err != nil {
 		return utils.Error(c, fiber.StatusInternalServerError, "Failed to delete supplier item", err, true)
 	}
 

@@ -23,9 +23,14 @@ func (s *PurchasingService) Create(
 	userID uint,
 	req dto.CreatePurchasingRequest,
 ) (*models.Purchasing, []dto.PurchasingItemResponse, error) {
+	if len(req.Items) == 0 {
+		return nil, nil, errors.New("purchasing must have at least one item")
+	}
+
 	var (
-		purchase models.Purchasing
-		itemsRes []dto.PurchasingItemResponse
+		purchase  models.Purchasing
+		itemsRes  []dto.PurchasingItemResponse
+		tempItems []dto.PurchasingItemResponse
 	)
 
 	err := s.DB.Transaction(func(tx *gorm.DB) error {
@@ -52,7 +57,7 @@ func (s *PurchasingService) Create(
 			}
 
 			if supplierItem.Stock < item.Quantity {
-				return errors.New("unsufficient item stock")
+				return errors.New("insufficient item stock")
 			}
 
 			subtotal := supplierItem.Price * int64(item.Quantity)
@@ -67,26 +72,32 @@ func (s *PurchasingService) Create(
 				return err
 			}
 
+			// langsung return err, cek apakah ter rollback atau berhasil
+			// prior medium
 			if err := tx.
 				Model(&supplierItem).
-				Update("stock", supplierItem.Stock-item.Quantity).
+				Where("id = ?", supplierItem.ID).
+				UpdateColumn("stock", gorm.Expr("stock - ?", item.Quantity)).
+				// Update("stock", supplierItem.Stock-item.Quantity).
 				Error; err != nil {
 				return err
 			}
 
 			grandTotal += subtotal
-			itemsRes = append(itemsRes, dto.PurchasingItemResponse{
+			tempItems = append(tempItems, dto.PurchasingItemResponse{
 				ItemID:   supplierItem.ItemID,
 				Quantity: item.Quantity,
 				Subtotal: subtotal,
 			})
 		}
 
+		// cek juga untuk commit nya apa berhasil
 		return tx.Model(&purchase).Update("grand_total", grandTotal).Error
 	})
 	if err != nil {
 		return nil, nil, err
 	}
 
+	itemsRes = tempItems
 	return &purchase, itemsRes, nil
 }
