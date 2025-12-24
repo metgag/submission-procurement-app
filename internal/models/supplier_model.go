@@ -4,7 +4,9 @@ import "gorm.io/gorm"
 
 type Supplier struct {
 	gorm.Model
-	Name    string `gorm:"type:varchar(70);not null"`
-	Email   string `gorm:"type:varchar(100);uniqueIndex;not null"`
-	Address string `gorm:"type:varchar(255);not null"`
+	Name          string         `gorm:"type:varchar(70);not null"`
+	Email         string         `gorm:"type:varchar(100);uniqueIndex;not null"`
+	Address       string         `gorm:"type:varchar(255);not null"`
+	SupplierItems []SupplierItem `gorm:"foreignKey:SupplierID;constraint:OnDelete:CASCADE"`
+	Purchasings   []Purchasing   `gorm:"foreignKey:SupplierID;constraint:OnDelete:SET NULL"`
 }
