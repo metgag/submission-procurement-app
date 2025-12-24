@@ -40,8 +40,8 @@ type CreateSupplierItemRequest struct {
 }
 
 type UpdateSupplierItemRequest struct {
-	Price int64 `json:"price" validate:"omitempty,gt=0"`
-	Stock int   `json:"stock" validate:"omitempty,gte=0"`
+	Price *int64 `json:"price" validate:"omitempty,gt=0"`
+	Stock *int   `json:"stock" validate:"omitempty,gte=0"`
 }
 
 type CreatePurchasingRequest struct {

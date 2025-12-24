@@ -56,19 +56,18 @@ func (h *SupplierItemHandler) Create(c *fiber.Ctx) error {
 	})
 }
 
-func (h *SupplierItemHandler) ReadItemsBySupplierID(c *fiber.Ctx) error {
-	supplierID := c.QueryInt("supplier_id")
-	if supplierID == 0 {
-		return utils.Error(c, fiber.StatusBadRequest, "supplier_id is required", nil, false)
+func (h *SupplierItemHandler) ReadItems(c *fiber.Ctx) error {
+	var items []models.SupplierItem
+
+	query := h.DB.
+		Preload("Item").
+		Preload("Supplier")
+
+	if supplierID := c.QueryInt("supplier_id"); supplierID > 0 {
+		query = query.Where("supplier_id = ?", supplierID)
 	}
 
-	var items []models.SupplierItem
-	if err := h.DB.
-		Preload("Item").
-		Preload("Supplier").
-		Where("supplier_id = ?", supplierID).
-		Find(&items).
-		Error; err != nil {
+	if err := query.Find(&items).Error; err != nil {
 		return utils.Error(c, fiber.StatusInternalServerError, "Unable to retrieve supplier items", err, true)
 	}
 
@@ -86,7 +85,60 @@ func (h *SupplierItemHandler) ReadItemsBySupplierID(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(dto.OKResponse{
-		Message: "Items by supplier retrieved successfully",
+		Message: "Supplier items retrieved succesfully",
 		Data:    res,
+	})
+}
+
+func (h *SupplierItemHandler) Update(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	var supplierItem models.SupplierItem
+	if err := utils.FindByIDValue(c, h.DB, "SupplierItem", id, &supplierItem); err != nil {
+		return err
+	}
+
+	var req dto.UpdateSupplierItemRequest
+	if err := utils.ParseAndValidate(c, &req); err != nil {
+		return err
+	}
+
+	if req.Price != nil {
+		supplierItem.Price = *req.Price
+	}
+	if req.Stock != nil {
+		supplierItem.Stock = *req.Stock
+	}
+
+	if err := h.DB.Save(&supplierItem).Error; err != nil {
+		return utils.Error(c, fiber.StatusInternalServerError, "Failed to update supplier item", err, true)
+	}
+
+	return c.JSON(dto.OKResponse{
+		Message: "Supplier item updated successfully",
+		Data: dto.SupplierItemResponse{
+			ID:         supplierItem.ID,
+			SupplierID: supplierItem.SupplierID,
+			ItemID:     supplierItem.ItemID,
+			Price:      supplierItem.Price,
+			Stock:      supplierItem.Stock,
+		},
+	})
+}
+
+func (h *SupplierItemHandler) Delete(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	var supplierItem models.SupplierItem
+	if err := utils.FindByIDValue(c, h.DB, "SupplierItem", id, &supplierItem); err != nil {
+		return err
+	}
+
+	if err := h.DB.Delete(&supplierItem).Error; err != nil {
+		return utils.Error(c, fiber.StatusInternalServerError, "Failed to delete supplier item", err, true)
+	}
+
+	return c.JSON(dto.OKResponse{
+		Message: "Supplier item deleted successfully",
 	})
 }
