@@ -38,7 +38,9 @@ func (h *ItemHandler) Create(c *fiber.Ctx) error {
 }
 
 func (h *ItemHandler) ReadAll(c *fiber.Ctx) error {
-	items, err := h.ItemService.GetAll()
+	page, pageSize := utils.GetPaginationParams(c)
+
+	items, total, err := h.ItemService.GetAll(page, pageSize)
 	if err != nil {
 		return utils.Error(c, fiber.StatusInternalServerError, "Unable to retrieve items", err, true)
 	}
@@ -54,6 +56,12 @@ func (h *ItemHandler) ReadAll(c *fiber.Ctx) error {
 	return c.JSON(dto.OKResponse{
 		Message: "Items retrieved successfully",
 		Data:    res,
+		Meta: &dto.MetaResponse{
+			Page:       page,
+			PageSize:   pageSize,
+			TotalItems: total,
+			TotalPages: (total + int64(pageSize) - 1) / int64(pageSize),
+		},
 	})
 }
 

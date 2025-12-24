@@ -54,7 +54,9 @@ func (h *SupplierItemHandler) Create(c *fiber.Ctx) error {
 
 func (h *SupplierItemHandler) ReadItems(c *fiber.Ctx) error {
 	supplierID := c.QueryInt("supplier_id")
-	items, err := h.Service.GetAll(supplierID)
+	page, pageSize := utils.GetPaginationParams(c)
+
+	items, total, err := h.Service.GetAll(supplierID, page, pageSize)
 	if err != nil {
 		return utils.Error(c, fiber.StatusInternalServerError, "Unable to retrieve supplier items", err, true)
 	}
@@ -75,6 +77,12 @@ func (h *SupplierItemHandler) ReadItems(c *fiber.Ctx) error {
 	return c.JSON(dto.OKResponse{
 		Message: "Supplier items retrieved successfully",
 		Data:    res,
+		Meta: &dto.MetaResponse{
+			Page:       page,
+			PageSize:   pageSize,
+			TotalItems: total,
+			TotalPages: (total + int64(pageSize) - 1) / int64(pageSize),
+		},
 	})
 }
 

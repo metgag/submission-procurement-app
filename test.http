@@ -64,7 +64,7 @@ Content-Type: application/json
 
 {
   "username": "user1",
-  "password": "User!23"
+  "password": "User!234"
 }
 
 
@@ -75,21 +75,21 @@ Content-Type: application/json
 ### =========================
 ### Read Items
 ### =========================
-GET {{baseUrl}}/items
+GET {{baseUrl}}/items?page=2&page_size=5
 Authorization: Bearer {{userToken}}
 
 
 ### =========================
 ### Read Suppliers
 ### =========================
-GET {{baseUrl}}/suppliers
+GET {{baseUrl}}/suppliers?page=1&page_size=5
 Authorization: Bearer {{userToken}}
 
 
 ### =========================
 ### Read Supplier Items
 ### =========================
-GET {{baseUrl}}/supplier-items
+GET {{baseUrl}}/supplier-items?page=1&page_size=5
 Authorization: Bearer {{userToken}}
 
 

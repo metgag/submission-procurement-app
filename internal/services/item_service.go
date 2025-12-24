@@ -29,14 +29,22 @@ func (s *ItemService) Create(req dto.CreateItemRequest) (*models.Item, error) {
 	return &item, nil
 }
 
-func (s *ItemService) GetAll() ([]models.Item, error) {
-	var items []models.Item
+func (s *ItemService) GetAll(page int, pageSize int) ([]models.Item, int64, error) {
+	var (
+		items []models.Item
+		total int64
+	)
 
-	if err := s.DB.Find(&items).Error; err != nil {
-		return nil, err
+	if err := s.DB.Model(&models.Item{}).Count(&total).Error; err != nil {
+		return nil, 0, err
 	}
 
-	return items, nil
+	offset := (page - 1) * pageSize
+	if err := s.DB.Limit(pageSize).Offset(offset).Find(&items).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return items, total, nil
 }
 
 func (s *ItemService) Update(item *models.Item, req dto.CreateItemRequest) error {

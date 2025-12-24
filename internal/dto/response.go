@@ -5,8 +5,16 @@ type ErrorResponse struct {
 }
 
 type OKResponse struct {
-	Message string `json:"message"`
-	Data    any    `json:"data,omitempty"`
+	Message string        `json:"message"`
+	Data    any           `json:"data,omitempty"`
+	Meta    *MetaResponse `json:"meta,omitempty"`
+}
+
+type MetaResponse struct {
+	Page       int   `json:"page"`
+	PageSize   int   `json:"page_size"`
+	TotalItems int64 `json:"total_items"`
+	TotalPages int64 `json:"total_pages"`
 }
 
 type RegisterResponse struct {

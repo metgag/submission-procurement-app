@@ -29,14 +29,22 @@ func (s *SupplierService) Create(req dto.CreateSupplierRequest) (*models.Supplie
 	return &supplier, nil
 }
 
-func (s *SupplierService) GetAll() ([]models.Supplier, error) {
-	var suppliers []models.Supplier
+func (s *SupplierService) GetAll(page int, pageSize int) ([]models.Supplier, int64, error) {
+	var (
+		suppliers []models.Supplier
+		total     int64
+	)
 
-	if err := s.DB.Find(&suppliers).Error; err != nil {
-		return nil, err
+	if err := s.DB.Model(&models.Supplier{}).Count(&total).Error; err != nil {
+		return nil, 0, err
 	}
 
-	return suppliers, nil
+	offset := (page - 1) * pageSize
+	if err := s.DB.Limit(pageSize).Offset(offset).Find(&suppliers).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return suppliers, total, nil
 }
 
 func (s *SupplierService) Update(

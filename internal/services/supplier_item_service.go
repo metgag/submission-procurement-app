@@ -32,19 +32,28 @@ func (s *SupplierItemService) Create(req dto.CreateSupplierItemRequest) (*models
 }
 
 // GetAll returns supplier items, optionally filtered by supplierID
-func (s *SupplierItemService) GetAll(supplierID int) ([]models.SupplierItem, error) {
-	var items []models.SupplierItem
-	query := s.DB.Preload("Item").Preload("Supplier")
+func (s *SupplierItemService) GetAll(supplierID, page, pageSize int) ([]models.SupplierItem, int64, error) {
+	var (
+		items []models.SupplierItem
+		total int64
+	)
+
+	query := s.DB.Model(&models.SupplierItem{}).Preload("Item").Preload("Supplier")
 
 	if supplierID > 0 {
 		query = query.Where("supplier_id = ?", supplierID)
 	}
 
-	if err := query.Find(&items).Error; err != nil {
-		return nil, err
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
 	}
 
-	return items, nil
+	offset := (page - 1) * pageSize
+	if err := query.Limit(pageSize).Offset(offset).Find(&items).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return items, total, nil
 }
 
 // Update modifies price or stock of a supplier item

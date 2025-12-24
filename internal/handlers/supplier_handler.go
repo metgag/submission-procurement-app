@@ -42,7 +42,9 @@ func (h *SupplierHandler) Create(c *fiber.Ctx) error {
 }
 
 func (h *SupplierHandler) ReadAll(c *fiber.Ctx) error {
-	suppliers, err := h.Service.GetAll()
+	page, pageSize := utils.GetPaginationParams(c)
+
+	suppliers, total, err := h.Service.GetAll(page, pageSize)
 	if err != nil {
 		return utils.Error(c, fiber.StatusInternalServerError, "Failed to read suppliers", err, true)
 	}
@@ -60,6 +62,12 @@ func (h *SupplierHandler) ReadAll(c *fiber.Ctx) error {
 	return c.JSON(dto.OKResponse{
 		Message: "Suppliers retrieved successfully",
 		Data:    res,
+		Meta: &dto.MetaResponse{
+			Page:       page,
+			PageSize:   pageSize,
+			TotalItems: total,
+			TotalPages: (total + int64(pageSize) - 1) / int64(pageSize),
+		},
 	})
 }
 
