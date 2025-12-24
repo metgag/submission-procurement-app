@@ -2,7 +2,7 @@ package utils
 
 import "github.com/gofiber/fiber/v2"
 
-func ParseAndValidate(c *fiber.Ctx, req any) error {
+func ParseBodyAndValidate(c *fiber.Ctx, req any) error {
 	if err := c.BodyParser(req); err != nil {
 		return Error(c, fiber.StatusBadRequest, "Invalid request body", err, true)
 	}
