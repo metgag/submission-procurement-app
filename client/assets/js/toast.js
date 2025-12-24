@@ -53,6 +53,6 @@ const showToast = ({ type = "success", title, message, duration = 3000 }) => {
   $("#toast-container").append(toast);
 
   setTimeout(() => {
-    toast.fadeOut(300, () => toast.remove());
+    toast.fadeOut(800, () => toast.remove());
   }, duration);
 };
