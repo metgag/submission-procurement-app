@@ -13,6 +13,34 @@ import (
 func InitRoutes(app *fiber.App, db *gorm.DB) {
 	app.Use(logger.New())
 
+	// =========================
+	// Static Frontend
+	// =========================
+
+	// Redirect root ke login
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.Redirect("/login.html")
+	})
+
+	// Optional clean URLs
+	app.Get("/login", func(c *fiber.Ctx) error {
+		return c.SendFile("./client/login.html")
+	})
+	app.Get("/register", func(c *fiber.Ctx) error {
+		return c.SendFile("./client/register.html")
+	})
+	app.Get("/dashboard", func(c *fiber.Ctx) error {
+		return c.SendFile("./client/dashboard.html")
+	})
+	app.Get("/purchase", func(c *fiber.Ctx) error {
+		return c.SendFile("./client/purchase.html")
+	})
+	app.Get("/invoice", func(c *fiber.Ctx) error {
+		return c.SendFile("./client/invoice.html")
+	})
+
+	app.Static("/", "./client")
+
 	// ========================
 	// Handlers & Services
 	// ========================
@@ -27,7 +55,7 @@ func InitRoutes(app *fiber.App, db *gorm.DB) {
 	// ========================
 	// API Group
 	// ========================
-	api := app.Group("/api")
+	api := app.Group("/api/v1")
 	{
 		// ========================
 		// Public Routes
@@ -44,6 +72,19 @@ func InitRoutes(app *fiber.App, db *gorm.DB) {
 		auth.Post("/login", authHandler.Login)
 
 		// ========================
+		// Admin & User Routes (protected)
+		// ========================
+		authProtected := api.Group(
+			"/",
+			middleware.JWTProtected(),
+		)
+		{
+			authProtected.Get("/items", itemHandler.ReadAll)
+			authProtected.Get("/suppliers", supplierHandler.ReadAll)
+			authProtected.Get("/supplier-items", supplierItemHandler.ReadItems)
+		}
+
+		// ========================
 		// Admin Routes (protected)
 		// ========================
 		admin := api.Group(
@@ -55,7 +96,6 @@ func InitRoutes(app *fiber.App, db *gorm.DB) {
 			adminSuppliers := admin.Group("/suppliers")
 			{
 				adminSuppliers.Post("/", supplierHandler.Create)
-				adminSuppliers.Get("/", supplierHandler.ReadAll)
 				adminSuppliers.Patch("/:id", supplierHandler.Update)
 				adminSuppliers.Delete("/:id", supplierHandler.Delete)
 			}
@@ -63,13 +103,15 @@ func InitRoutes(app *fiber.App, db *gorm.DB) {
 			adminItems := admin.Group("/items")
 			{
 				adminItems.Post("/", itemHandler.Create)
-				adminItems.Get("/", itemHandler.ReadAll)
+				adminItems.Patch("/:id", itemHandler.Update)
+				adminItems.Delete("/:id", itemHandler.Delete)
 			}
 
 			adminSupplierItems := admin.Group("/supplier-items")
 			{
 				adminSupplierItems.Post("/", supplierItemHandler.Create)
-				adminSupplierItems.Get("/", supplierItemHandler.ReadItemsBySupplierID)
+				adminSupplierItems.Patch("/:id", supplierItemHandler.Update)
+				adminSupplierItems.Delete("/:id", supplierItemHandler.Delete)
 			}
 		}
 
