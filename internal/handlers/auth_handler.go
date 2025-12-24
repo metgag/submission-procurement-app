@@ -32,7 +32,7 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 	user := models.User{
 		Username: req.Username,
 		Password: hashedPassword,
-		Role:     models.RoleUser,
+		Role:     models.UserRole(req.Role),
 	}
 
 	if err := h.DB.Create(&user).Error; err != nil {
