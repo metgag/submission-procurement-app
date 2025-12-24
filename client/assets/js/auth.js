@@ -7,78 +7,112 @@ const logout = () => {
 
 // register
 const handleRegister = () => {
-  $("#registerBtn").click(() => {
+  $("#registerForm").on("submit", (e) => {
+    e.preventDefault();
+
     const username = $("#username").val().trim();
     const password = $("#password").val().trim();
+    const btn = $("#registerBtn");
 
     if (!username || !password) {
       showToast({
         type: "error",
         title: "Validation Failed",
-        message:
-          err.responseJSON?.message || "Username and password is required",
+        message: "Username and password is required",
       });
       return;
     }
 
+    if (password.length < 8) {
+      showToast({
+        type: "error",
+        title: "Validation Failed",
+        message: "Password should at least 8 characters long",
+      });
+      return;
+    }
+
+    btn.prop("disabled", true).text("Loading...");
+
     api
       .post("/auth/register", { username, password })
       .then(() => {
-        showToast({
-          type: "success",
-          title: "Register Success",
-          message: "Account created successfully",
-        });
-
         setTimeout(() => {
-          window.location.href = "/login.html";
-        }, 1500);
+          showToast({
+            type: "success",
+            title: "Register Success",
+            message: "Account created successfully",
+          });
+
+          btn.text("Redirecting...");
+          setTimeout(() => {
+            window.location.href = "/login.html";
+          }, 2800);
+        }, 1600);
       })
       .catch((err) => {
-        showToast({
-          type: "error",
-          title: "Register Failed",
-          message: err.responseJSON?.message || "Register error",
-        });
+        setTimeout(() => {
+          showToast({
+            type: "error",
+            title: "Register Failed",
+            message: err.responseText || "Register error",
+          });
+
+          btn.prop("disabled", false).text("Register");
+        }, 1600);
       });
   });
 };
 
 // login
 const handleLogin = () => {
-  $("#loginBtn").click(() => {
+  $("#loginForm").on("submit", (e) => {
+    e.preventDefault();
+
     const username = $("#username").val().trim();
     const password = $("#password").val().trim();
+    const btn = $("#loginBtn");
 
     if (!username || !password) {
       showToast({
         type: "error",
         title: "Validation Failed",
-        message:
-          err.responseJSON?.message || "Username and password is required",
+        message: "Username and password is required",
       });
       return;
     }
 
+    btn.prop("disabled", true).text("Loading...");
+
     api
       .post("/auth/login", { username, password })
       .then((res) => {
-        setToken(res.data.token);
+        setTimeout(() => {
+          setToken(res.data.token);
 
-        showToast({
-          type: "success",
-          title: "Login Success",
-          message: "Welcome back",
-        });
+          showToast({
+            type: "success",
+            title: "Login Success",
+            message: "Welcome back",
+          });
 
-        setTimeout(() => (window.location.href = "/dashboard"), 2400);
+          btn.text("Redirecting...");
+
+          setTimeout(() => {
+            window.location.href = "/dashboard";
+          }, 2800);
+        }, 1600);
       })
       .catch((err) => {
-        showToast({
-          type: "error",
-          title: "Login Failed",
-          message: err.responseJSON?.message || "Invalid username or password",
-        });
+        setTimeout(() => {
+          showToast({
+            type: "error",
+            title: "Login Failed",
+            message: err.responseText || "Invalid username or password",
+          });
+
+          btn.prop("disabled", false).text("Login");
+        }, 1600);
       });
   });
 };

@@ -16,7 +16,7 @@
     <div class="bg-white p-6 rounded shadow w-full max-w-md">
       <h2 class="text-2xl font-bold mb-4 text-center">Register</h2>
 
-      <div class="flex flex-col gap-4">
+      <form id="registerForm" class="flex flex-col gap-4">
         <label for="username">
           <span class="font-medium text-gray-700"> Email </span>
 
@@ -39,11 +39,12 @@
 
         <button
           id="registerBtn"
-          class="w-full bg-blue-700 mt-4 text-white py-2 rounded cursor-pointer hover:opacity-80"
+          type="submit"
+          class="w-full bg-blue-700 mt-4 text-white py-2 rounded cursor-pointer hover:opacity-80 disabled:cursor-not-allowed disabled:bg-gray-500"
         >
           Register
         </button>
-      </div>
+      </form>
 
       <p class="text-center mt-4 text-sm">
         Already have an account?
